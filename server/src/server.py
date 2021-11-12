@@ -6,7 +6,7 @@ from api.MessageEndpoints import MessageList
 from db.utils import initialize_db
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 api = Api(app)
 
 api.add_resource(MessageList, '/messages')
@@ -19,4 +19,5 @@ def db_setup():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='localhost', port=5000)
+    app.run(debug=True)
+    # app.run(debug=True, host='localhost', port=5000)
